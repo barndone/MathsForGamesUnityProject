@@ -11,12 +11,26 @@ public class PlayerMotor : MonoBehaviour
     [SerializeField] private LayerMask groundMask = ~0;
 
     [SerializeField] private float sprintStam = 5f;
+    public float MaxSprintStam
+    {
+        get { return sprintStam;  }
+    }
+
     private float curSprintStam = 5f;
+    public float SprintStam
+    {
+        get { return curSprintStam; }
+    }
 
 
     private Vector3 moveWish;
     private bool jumpWish;
     private bool sprintWish;
+    public bool Sprinting
+    {
+        get { return sprintWish; }
+    }
+
     private float yVelocity;
 
     [SerializeField] private float sprintSpeed = 10f;
@@ -55,9 +69,20 @@ public class PlayerMotor : MonoBehaviour
         {
             baseMove = moveWish * sprintSpeed;
             curSprintStam -= Time.deltaTime;
-            if(curSprintStam <= 0)
+            if(curSprintStam <= 0 || !Input.GetButton("Fire3"))
             {
                 sprintWish = false;
+            }
+        }
+        else
+        {
+            if (curSprintStam < 5.0f)
+            {
+                curSprintStam += (Time.deltaTime / 2);
+            }
+            else
+            {
+                curSprintStam = 5.0f;
             }
         }
 
@@ -69,7 +94,7 @@ public class PlayerMotor : MonoBehaviour
                             groundMask,                                         //which types of objects to hit?
                             QueryTriggerInteraction.Ignore))                    //whether we should include or ignore triggers
         {
-            Debug.Log("hit");
+            //Debug.Log("hit");
             baseMove = Vector3.ProjectOnPlane(baseMove, hit.normal);
         }
 
