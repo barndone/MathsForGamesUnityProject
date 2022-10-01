@@ -7,6 +7,8 @@ public class LockScript : MonoBehaviour
     [SerializeField] GameObject lockedDoor;
     private PlayerMotor motor;
 
+    public KeyScript key;
+
     // Update is called once per frame
     private void OnTriggerEnter(Collider other)
     {
@@ -23,6 +25,7 @@ public class LockScript : MonoBehaviour
             Debug.Log("Door unlocked.");
             Destroy(lockedDoor);
             Destroy(gameObject);
+
         }
         else
         {

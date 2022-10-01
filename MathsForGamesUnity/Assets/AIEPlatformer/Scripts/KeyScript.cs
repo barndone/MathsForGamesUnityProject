@@ -7,7 +7,12 @@ public class KeyScript : MonoBehaviour
     private GameObject parent;
     private PlayerMotor motor;
 
-    [SerializeField] private Vector3 offset;
+    private Vector3 offset = Vector3.zero;
+    public float orbitSpeed = 180.0f;
+    public float orbitRadius = 0.75f;
+
+    public float bounceSpeed = 90.0f;
+    public float bounceHeight = 0.5f;
 
     // Update is called once per frame
     void Update()
@@ -15,21 +20,29 @@ public class KeyScript : MonoBehaviour
         //if the key has a parent object (the player)
         if (parent != null)
         {
+            offset.x = Mathf.Cos(Mathf.Deg2Rad * orbitSpeed * Time.time);
+            offset.z = Mathf.Sin(Mathf.Deg2Rad * orbitSpeed * Time.time);
+            offset *= orbitRadius;
             //spin around the parent (the player)
-            gameObject.transform.position = parent.transform.position + offset;
+            transform.position = parent.transform.position + offset;
+
+            offset.y = Mathf.Sin(bounceSpeed * Time.time) * bounceHeight;
         }
         //otherwise do nothing
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            parent = other.gameObject;
-            parent.TryGetComponent<PlayerMotor>(out motor);
-            motor.hasKey = true;
-        }
-        if (other.CompareTag("lock"))
+        if (parent == null)
+        { 
+            if (other.TryGetComponent<PlayerMotor> (out PlayerMotor player))
+            {
+                //expensive to do, just update the transform of the object
+                parent = other.gameObject;
+                player.hasKey = true;
+            }
+        }   
+        else if (other.TryGetComponent<LockScript>(out LockScript obj))
         {
 
         }
